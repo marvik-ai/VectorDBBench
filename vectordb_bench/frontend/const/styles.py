@@ -46,6 +46,7 @@ DB_TO_ICON = {
     DB.PgVectoRS: "https://assets.zilliz.com/PG_Vector_d464f2ef5f.png",
     DB.Redis: "https://assets.zilliz.com/Redis_Cloud_74b8bfef39.png",
     DB.Chroma: "https://assets.zilliz.com/chroma_ceb3f06ed7.png",
+    DB.Oracle: "https://pbs.twimg.com/profile_images/1534176559988350976/sNcNI83n_400x400.png",
 }
 
 # RedisCloud color: #0D6EFD

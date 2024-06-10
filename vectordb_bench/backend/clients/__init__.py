@@ -32,6 +32,7 @@ class DB(Enum):
     PgVectoRS = "PgVectoRS"
     Redis = "Redis"
     Chroma = "Chroma"
+    Oracle = "Oracle"
 
 
     @property
@@ -76,6 +77,10 @@ class DB(Enum):
         if self == DB.Chroma:
             from .chroma.chroma import ChromaClient
             return ChromaClient
+        
+        if self == DB.Oracle:
+            from .oracle.oracle import Oracle
+            return Oracle
 
     @property
     def config_cls(self) -> Type[DBConfig]:
@@ -119,6 +124,10 @@ class DB(Enum):
         if self == DB.Chroma:
             from .chroma.config import ChromaConfig
             return ChromaConfig
+        
+        if self == DB.Oracle:
+            from .oracle.config import OracleConfig
+            return OracleConfig
 
     def case_config_cls(self, index_type: IndexType | None = None) -> Type[DBCaseConfig]:
         if self == DB.Milvus:
@@ -148,6 +157,10 @@ class DB(Enum):
         if self == DB.PgVectoRS:
             from .pgvecto_rs.config import _pgvecto_rs_case_config
             return _pgvecto_rs_case_config.get(index_type)
+        
+        if self == DB.Oracle:
+            from .oracle.config import OracleDBCaseConfig
+            return OracleDBCaseConfig
 
         # DB.Pinecone, DB.Chroma, DB.Redis
         return EmptyDBCaseConfig
