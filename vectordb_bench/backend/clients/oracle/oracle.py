@@ -117,10 +117,12 @@ class Oracle(VectorDB):
     def search_embedding(
         self, query: list[float], k: int = 100, filters: dict | None = None
     ) -> list[int]:
-        metric = self.db_case_config.search_param()['metric']
+        where = f"{self._id_col_name} >= {filters.get('id')}" if filters else "1=1"
+        metric = self.db_case_config.search_param()["metric"]
         select_sql = f"""
         SELECT {self._id_col_name}
         FROM {self._table_name}
+        WHERE {where}
         ORDER BY VECTOR_DISTANCE({self._vec_col_name}, :1, {metric})
         FETCH APPROXIMATE FIRST {k} ROWS ONLY
         """
