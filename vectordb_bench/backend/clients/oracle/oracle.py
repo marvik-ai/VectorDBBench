@@ -80,7 +80,6 @@ class Oracle(VectorDB):
             {self._vec_col_name} VECTOR({self.dim})
         )
         """
-        log.info(create_table_sql)
         self.cursor.execute(create_table_sql)
 
     @contextmanager
@@ -125,7 +124,6 @@ class Oracle(VectorDB):
         ORDER BY VECTOR_DISTANCE({self._vec_col_name}, :1, {metric})
         FETCH APPROXIMATE FIRST {k} ROWS ONLY
         """
-        log.info(select_sql)
         self.cursor.execute(select_sql, (array.array("f", query),))
         result = self.cursor.fetchall()
         return [int(i[0]) for i in result]
@@ -141,7 +139,6 @@ class Oracle(VectorDB):
         DISTANCE {distance}
         WITH TARGET ACCURACY 95
         """
-        log.info(create_vector_index_sql)
         self.cursor.execute(create_vector_index_sql)
 
     def ready_to_load(self):
