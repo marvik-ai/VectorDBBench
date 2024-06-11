@@ -1,4 +1,5 @@
 from pydantic import BaseModel, SecretStr
+
 from ..api import DBCaseConfig, DBConfig, MetricType
 
 

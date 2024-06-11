@@ -1,10 +1,13 @@
 import array
 import logging
-from typing import Optional, Tuple
-from vectordb_bench.backend.clients.oracle.config import OracleDBCaseConfig
-from ..api import VectorDB
 from contextlib import contextmanager
+from typing import Optional, Tuple
+
 import oracledb
+
+from vectordb_bench.backend.clients.oracle.config import OracleDBCaseConfig
+
+from ..api import VectorDB
 
 log = logging.getLogger(__name__)
 
@@ -33,8 +36,7 @@ class Oracle(VectorDB):
 
         self.conn, self.cursor = self._create_connection(**self.db_config)
 
-        log.info(
-            f"{self.name} config values: {self.db_config}\n{self.db_case_config}")
+        log.info(f"{self.name} config values: {self.db_config}\n{self.db_case_config}")
 
         if drop_old:
             self._drop_table()
@@ -93,32 +95,28 @@ class Oracle(VectorDB):
             self.conn = None
 
     def insert_embeddings(
-        self,
-        embeddings: list[list[float]],
-        metadata: list[int],
-        **kwargs
+        self, embeddings: list[list[float]], metadata: list[int], **kwargs
     ) -> Tuple[int, Optional[Exception]]:
         try:
             insert_sql = f"""
             INSERT INTO {self._table_name} ({self._id_col_name}, {self._vec_col_name})
             VALUES (:1, :2)
             """
-            log.info(insert_sql)
-            parameters = [(metadata[i], array.array("f", embeddings[i]))
-                          for i in range(len(metadata))]
+            parameters = [
+                (metadata[i], array.array("f", embeddings[i]))
+                for i in range(len(metadata))
+            ]
             self.cursor.executemany(insert_sql, parameters)
             self.conn.commit()
             return len(metadata), None
         except Exception as e:
             log.warning(
-                f"Failed to insert data into table ({self._table_name}), error: {e}")
+                f"Failed to insert data into table ({self._table_name}), error: {e}"
+            )
             return 0, e
 
     def search_embedding(
-        self,
-        query: list[float],
-        k: int = 100,
-        filters: dict | None = None
+        self, query: list[float], k: int = 100, filters: dict | None = None
     ) -> list[int]:
         metric = self.db_case_config.search_param()['metric']
         select_sql = f"""
@@ -137,7 +135,7 @@ class Oracle(VectorDB):
 
     def _create_index(self):
         log.info(f"{self.name} client create index : {self._index_name}")
-        distance = self.db_case_config.index_param()['distance']
+        distance = self.db_case_config.index_param()["distance"]
         create_vector_index_sql = f"""
         CREATE VECTOR INDEX {self._index_name} ON {self._table_name} ({self._vec_col_name}) ORGANIZATION NEIGHBOR PARTITIONS
         DISTANCE {distance}
